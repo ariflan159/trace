@@ -53,10 +53,10 @@
         <value>Nadpisz wielkość pada wyznaczoną przez mapę.</value>
     </data>
   <data name="difficulty_adjust_approach_rate_name" xml:space="preserve">
-        <value>Approach Rate</value>
+        <value>Prędkość beatów</value>
     </data>
   <data name="difficulty_adjust_approach_rate_description" xml:space="preserve">
-        <value>Override a beatmap's set AR.</value>
+        <value>Nadpisz AR wyznaczoną przez mapę.</value>
     </data>
   <data name="dual_description" xml:space="preserve">
         <value>Kiedy jeden to za mało</value>
@@ -71,7 +71,7 @@
         <value>Rozmiar latarki</value>
     </data>
   <data name="flashlight_size_description" xml:space="preserve">
-        <value>Multiplier applied to the default flashlight size.</value>
+        <value>Mnożnik zastosowany do podstawowego rozmiaru latarki.</value>
     </data>
   <data name="flashlight_combo_name" xml:space="preserve">
         <value>Zmień rozmiar na podstawie combo</value>
@@ -83,7 +83,7 @@
         <value>Automatyczny ruch pada - po prostu podążaj za rytmem.</value>
     </data>
   <data name="fadeout_description" xml:space="preserve">
-        <value>Beats fade out before you hit them!</value>
+        <value>Beaty zanikają zanim je uderzysz!</value>
     </data>
   <data name="fadein_description" xml:space="preserve">
         <value>Beaty pojawiają się znikąd!</value>
@@ -92,7 +92,7 @@
         <value>Beaty pojawiają się z zewnątrz pola gry.</value>
     </data>
   <data name="impossible_sliders_description" xml:space="preserve">
-        <value>Entirely removes the check for very sharp angles</value>
+        <value>Kompletnie usuwa sprawdzanie dla bardzo ostrych kątów</value>
     </data>
   <data name="lite_description" xml:space="preserve">
         <value>Usuwa niektóre aspekty tau.</value>
@@ -110,19 +110,19 @@
         <value>Kompletnie usuwa hard beaty.</value>
     </data>
   <data name="lite_slider_division_level_name" xml:space="preserve">
-        <value>Slider division level</value>
+        <value>Poziom podziału sliderów</value>
     </data>
   <data name="lite_slider_division_level_description" xml:space="preserve">
-        <value>The minimum slider length divisor.</value>
+        <value>Minimalny dzielnik długości sliderów. </value>
     </data>
   <data name="no_scope_description" xml:space="preserve">
         <value>Gdzie się podział pad?</value>
     </data>
   <data name="no_scope_threshold_name" xml:space="preserve">
-        <value>Hidden at combo</value>
+        <value>Schowane przy combo</value>
     </data>
   <data name="no_scope_threshold_description" xml:space="preserve">
-        <value>The combo count at which the paddle becomes completely hidden</value>
+        <value>Liczba combo, przy której pad jest kompletnie schowany</value>
     </data>
   <data name="relax_description" xml:space="preserve">
         <value>Nie musisz klikać. Daj swoim klikającym/stukającym palcom odpocząć.</value>
@@ -134,12 +134,12 @@
         <value>Kierunek</value>
     </data>
   <data name="traceable_description" xml:space="preserve">
-        <value>Brim with no yankie</value>
+        <value>Daszek bez czapki</value>
     </data>
   <data name="lenience_description" xml:space="preserve">
-        <value>Hard beats are more forgiving</value>
+        <value>Hard beaty są prostsze</value>
     </data>
   <data name="strict_description" xml:space="preserve">
-        <value>Aim the hard beats!</value>
+        <value>Celuj w hard beaty!</value>
     </data>
 </root>
