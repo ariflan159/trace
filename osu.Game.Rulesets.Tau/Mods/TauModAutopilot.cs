@@ -21,8 +21,7 @@ namespace osu.Game.Rulesets.Tau.Mods
         public override IconUsage? Icon => OsuIcon.ModAutopilot;
         public override ModType Type => ModType.Automation;
         public override LocalisableString Description => ModStrings.AutopilotDescription;
-        public override double ScoreMultiplier => 1;
-        public override Type[] IncompatibleMods => new[] { typeof(ModRelax), typeof(ModFailCondition), typeof(ModNoFail), typeof(ModAutoplay) };
+        public override Type[] IncompatibleMods => [typeof(ModRelax), typeof(ModFailCondition), typeof(ModNoFail), typeof(ModAutoplay)];
 
         public bool PerformFail() => false;
 

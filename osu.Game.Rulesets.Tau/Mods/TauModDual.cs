@@ -11,7 +11,6 @@ namespace osu.Game.Rulesets.Tau.Mods
         public override string Name => "Dual";
         public override string Acronym => "DL";
         public override LocalisableString Description => ModStrings.DualDescription;
-        public override double ScoreMultiplier => 1;
         public override ModType Type => ModType.Fun;
 
         public override bool HasImplementation => true;

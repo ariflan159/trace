@@ -30,8 +30,6 @@ namespace osu.Game.Rulesets.Tau.Mods
 {
     public partial class TauModFlashlight : TauModFlashlight<TauHitObject>
     {
-        public override double ScoreMultiplier => 1.16;
-
         public override float DefaultFlashlightSize => 0;
 
         [SettingSource(typeof(ModStrings), nameof(ModStrings.FlashlightSizeName), nameof(ModStrings.FlashlightSizeDescription))]

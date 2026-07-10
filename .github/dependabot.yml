@@ -4,4 +4,7 @@ updates:
   directory: "/"
   schedule:
     interval: daily
+  target-branch: releases/next
   open-pull-requests-limit: 10
+  allow:
+    - dependency-name: "ppy.osu.*"

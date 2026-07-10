@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Tau.Mods
         public override string Name => "Roundabout";
         public override string Acronym => "RB";
         public override LocalisableString Description => ModStrings.RoundaboutDescription;
-        public override double ScoreMultiplier => 1;
         public override ModType Type => ModType.Fun;
         public override bool UserPlayable => true;
         public override IconUsage? Icon => FontAwesome.Solid.Redo;
@@ -46,7 +45,10 @@ namespace osu.Game.Rulesets.Tau.Mods
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            ((TauBeatmapConverter)beatmapConverter).LockedDirection = Direction.Value;
+            if (beatmapConverter is not TauBeatmapConverter tauConverter)
+                return;
+
+            tauConverter.LockedDirection = Direction.Value;
         }
 
         public partial class RoundaboutTauCursor : TauCursor

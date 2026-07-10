@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -26,8 +25,6 @@ namespace osu.Game.Rulesets.Tau.Mods
     public abstract class TauModHidden : ModHidden, IApplicableToDrawableRuleset<TauHitObject>
     {
         public override string Name => Mode.GetDescription();
-        public override double ScoreMultiplier => 1.06;
-        public override Type[] IncompatibleMods => base.IncompatibleMods.Concat(new[] { typeof(TauModInverse) }).ToArray();
 
         public void ApplyToDrawableRuleset(DrawableRuleset<TauHitObject> drawableRuleset)
         {

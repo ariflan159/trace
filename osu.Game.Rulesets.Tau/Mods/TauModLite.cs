@@ -14,12 +14,11 @@ namespace osu.Game.Rulesets.Tau.Mods
     {
         public override string Name => "Lite";
         public override string Acronym => "LT";
-        public override double ScoreMultiplier => 1.0;
         public override IconUsage? Icon => FontAwesome.Solid.History;
         public override LocalisableString Description => ModStrings.LiteDescription;
         public override ModType Type => ModType.Conversion;
 
-        public override Type[] IncompatibleMods => new[] { typeof(TauModStrict), typeof(TauModLenience) };
+        public override Type[] IncompatibleMods => [typeof(TauModStrict), typeof(TauModLenience)];
 
         [SettingSource(typeof(ModStrings), nameof(ModStrings.LiteToggleSlidersName), nameof(ModStrings.LiteToggleSlidersDescription))]
         public Bindable<bool> ToggleSliders { get; } = new Bindable<bool>(false);
@@ -39,11 +38,12 @@ namespace osu.Game.Rulesets.Tau.Mods
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            var converter = (TauBeatmapConverter)beatmapConverter;
+            if (beatmapConverter is not TauBeatmapConverter tauConverter)
+                return;
 
-            converter.CanConvertToHardBeats = ToggleHardBeats.Value;
-            converter.CanConvertToSliders = ToggleSliders.Value;
-            converter.SliderDivisor = SlidersDivisionLevel.Value;
+            tauConverter.CanConvertToHardBeats = ToggleHardBeats.Value;
+            tauConverter.CanConvertToSliders = ToggleSliders.Value;
+            tauConverter.SliderDivisor = SlidersDivisionLevel.Value;
         }
     }
 }

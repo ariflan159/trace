@@ -13,6 +13,7 @@ using osu.Game.Rulesets.Tau.Mods;
 using osu.Game.Rulesets.Tau.Objects;
 using osu.Game.Rulesets.Tau.Scoring;
 using osu.Game.Rulesets.Tau.UI;
+using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Tau.Difficulty
 {
@@ -28,7 +29,7 @@ namespace osu.Game.Rulesets.Tau.Difficulty
         {
         }
 
-        protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
+        protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
         {
             if (beatmap.HitObjects.Count == 0)
                 return new TauDifficultyAttributes { Mods = mods };
@@ -50,6 +51,7 @@ namespace osu.Game.Rulesets.Tau.Difficulty
                 aimNoSliders = 0.0;
             }
 
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
             double preempt = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.ApproachRate, 1800, 1200, 450) / clockRate;
 
             double baseAim = Math.Pow(5 * Math.Max(1, aim / 0.0675) - 4, 3) / 100000;
@@ -81,12 +83,13 @@ namespace osu.Game.Rulesets.Tau.Difficulty
             };
         }
 
-        protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate)
+        protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, Mod[] mods)
         {
             properties.SetRange(beatmap.Difficulty.CircleSize);
 
             TauHitObject lastObject = null;
             TauAngledDifficultyHitObject lastAngled = null;
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
             var objects = new List<DifficultyHitObject>();
 
             foreach (var hitObject in beatmap.HitObjects.Cast<TauHitObject>())
@@ -110,23 +113,25 @@ namespace osu.Game.Rulesets.Tau.Difficulty
             return objects;
         }
 
-        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods, double clockRate)
+        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods)
         {
             HitWindows hitWindows = new TauHitWindow();
             hitWindows.SetDifficulty(beatmap.Difficulty.OverallDifficulty);
 
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
+
             hitWindowGreat = hitWindows.WindowFor(HitResult.Great) / clockRate;
-            return new Skill[]
-            {
-                new Aim(mods, new[] { typeof(Beat), typeof(StrictHardBeat), typeof(SliderRepeat), typeof(Slider) }),
-                new Aim(mods, new[] { typeof(Beat), typeof(StrictHardBeat) }),
+            return
+            [
+                new Aim(mods, [typeof(Beat), typeof(StrictHardBeat), typeof(SliderRepeat), typeof(Slider)]),
+                new Aim(mods, [typeof(Beat), typeof(StrictHardBeat)]),
                 new Speed(mods, hitWindowGreat),
                 new Complexity(mods)
-            };
+            ];
         }
 
-        protected override Mod[] DifficultyAdjustmentMods => new Mod[]
-        {
+        protected override Mod[] DifficultyAdjustmentMods =>
+        [
             // Diff. Reduction
             new TauModEasy(),
             new TauModHalfTime(),
@@ -150,6 +155,6 @@ namespace osu.Game.Rulesets.Tau.Difficulty
             new ModWindDown(),
             new ModAdaptiveSpeed(),
             new TauModImpossibleSliders()
-        };
+        ];
     }
 }

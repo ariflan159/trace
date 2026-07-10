@@ -13,7 +13,6 @@ namespace osu.Game.Rulesets.Tau.Mods
         public override string Acronym => "TC";
         public override ModType Type => ModType.Fun;
         public override LocalisableString Description => ModStrings.TraceableDescription;
-        public override double ScoreMultiplier => 1;
 
         public void ApplyToDrawableRuleset(DrawableRuleset<TauHitObject> drawableRuleset)
         {

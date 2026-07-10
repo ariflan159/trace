@@ -18,10 +18,9 @@ namespace osu.Game.Rulesets.Tau.Mods
     {
         public override string Name => "Lenience";
         public override LocalisableString Description => ModStrings.LenienceDescription;
-        public override double ScoreMultiplier => 0.6;
         public override string Acronym => "LN";
         public override ModType Type => ModType.DifficultyReduction;
-        public override Type[] IncompatibleMods => new[] { typeof(TauModStrict), typeof(TauModLite) };
+        public override Type[] IncompatibleMods => [typeof(TauModStrict), typeof(TauModLite)];
 
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
@@ -59,12 +58,12 @@ namespace osu.Game.Rulesets.Tau.Mods
         private partial class DrawableLenientHardBeats : DrawableHardBeat
         {
             protected override TauAction[] Actions { get; } =
-            {
+            [
                 TauAction.HardButton1,
                 TauAction.HardButton2,
                 TauAction.LeftButton,
                 TauAction.RightButton
-            };
+            ];
 
             private TauAction pressedAction;
 
