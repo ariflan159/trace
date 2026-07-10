@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,6 +49,7 @@ namespace osu.Game.Rulesets.Tau
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new TauReplayFrame();
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TauDifficultyCalculator(RulesetInfo, beatmap);
         public override PerformanceCalculator CreatePerformanceCalculator() => new TauPerformanceCalculator();
+        public override ScoreMultiplierCalculator CreateScoreMultiplierCalculator(ScoreMultiplierContext context) => new TauScoreMultiplierCalculator(context);
         public override RulesetSettingsSubsection CreateSettings() => new TauSettingsSubsection(this);
 
         public override Drawable CreateIcon() => new TauIcon(this);
@@ -57,35 +57,35 @@ namespace osu.Game.Rulesets.Tau
         public override IEnumerable<Mod> GetModsFor(ModType type)
             => type switch
             {
-                ModType.DifficultyReduction => new Mod[]
-                {
+                ModType.DifficultyReduction =>
+                [
                     new TauModEasy(),
                     new TauModNoFail(),
                     new MultiMod(new TauModHalfTime(), new TauModDaycore()),
                     new TauModLenience()
-                },
-                ModType.DifficultyIncrease => new Mod[]
-                {
+                ],
+                ModType.DifficultyIncrease =>
+                [
                     new TauModHardRock(),
                     new MultiMod(new TauModSuddenDeath(), new TauModPerfect()),
                     new MultiMod(new TauModDoubleTime(), new TauModNightcore()),
                     new MultiMod(new TauModFadeOut(), new TauModFadeIn()),
                     new TauModFlashlight(),
                     new TauModStrict()
-                },
-                ModType.Automation => new Mod[]
-                {
+                ],
+                ModType.Automation =>
+                [
                     new MultiMod(new TauModAutoplay(), new TauModShowoffAutoplay(), new TauModCinema()),
                     new TauModRelax(),
                     new TauModAutopilot()
-                },
-                ModType.Conversion => new Mod[]
-                {
+                ],
+                ModType.Conversion =>
+                [
                     new TauModDifficultyAdjust(),
                     new TauModLite()
-                },
-                ModType.Fun => new Mod[]
-                {
+                ],
+                ModType.Fun =>
+                [
                     new MultiMod(new ModWindUp(), new ModWindDown()),
                     new ModAdaptiveSpeed(),
                     new TauModImpossibleSliders(),
@@ -93,9 +93,9 @@ namespace osu.Game.Rulesets.Tau
                     new TauModNoScope(),
                     new TauModTraceable(),
                     new TauModDual(),
-                    new TauModBarrelRoll(),
-                },
-                _ => Enumerable.Empty<Mod>()
+                    new TauModBarrelRoll()
+                ],
+                _ => []
             };
 
         public override IEnumerable<HitResult> GetValidHitResults()
@@ -118,8 +118,8 @@ namespace osu.Game.Rulesets.Tau
                 _ => base.GetDisplayNameForHitResult(result)
             };
 
-        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
-        {
+        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) =>
+        [
             new StatisticItem("Performance Breakdown", () => new PerformanceBreakdownChart(score, playableBeatmap)
             {
                 RelativeSizeAxes = Axes.X,
@@ -138,22 +138,21 @@ namespace osu.Game.Rulesets.Tau
                 Height = 250
             }, true),
 
-            new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
-            {
+            new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, [
                 new AverageHitError(score.HitEvents),
                 new UnstableRate(score.HitEvents)
-            }), true)
-        };
+            ]), true)
+        ];
 
-        public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
-        {
+        public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
+        [
             new KeyBinding(InputKey.Z, TauAction.LeftButton),
             new KeyBinding(InputKey.X, TauAction.RightButton),
             new KeyBinding(InputKey.MouseLeft, TauAction.LeftButton),
             new KeyBinding(InputKey.MouseRight, TauAction.RightButton),
             new KeyBinding(InputKey.Space, TauAction.HardButton1),
-            new KeyBinding(InputKey.LShift, TauAction.HardButton2),
-        };
+            new KeyBinding(InputKey.LShift, TauAction.HardButton2)
+        ];
 
         private partial class TauIcon : CompositeDrawable
         {
@@ -179,8 +178,7 @@ namespace osu.Game.Rulesets.Tau
                     "Fonts/tauFont",
                     host.CreateTextureLoaderStore(ruleset.CreateResourceStore())));
 
-                AddRangeInternal(new Drawable[]
-                {
+                AddRangeInternal([
                     new SpriteIcon
                     {
                         Anchor = Anchor.Centre,
@@ -193,8 +191,8 @@ namespace osu.Game.Rulesets.Tau
                         Origin = Anchor.Centre,
                         Icon = TauIcons.Tau,
                         Scale = new Vector2(0.9f)
-                    },
-                });
+                    }
+                ]);
             }
         }
     }
