@@ -5,6 +5,5 @@ namespace osu.Game.Rulesets.Tau.Mods
 {
     public class TauModNightcore : ModNightcore<TauHitObject>
     {
-        public override double ScoreMultiplier => 1.12;
     }
 }
