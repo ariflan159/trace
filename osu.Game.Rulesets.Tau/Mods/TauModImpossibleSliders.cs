@@ -10,7 +10,6 @@ namespace osu.Game.Rulesets.Tau.Mods
     {
         public override string Name => "Impossible Sliders";
         public override LocalisableString Description => ModStrings.ImpossibleSlidersDescription;
-        public override double ScoreMultiplier => 1f;
         public override string Acronym => "IS";
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
