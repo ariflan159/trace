@@ -146,14 +146,12 @@ namespace osu.Game.Rulesets.Trace.UI
     private double lastFrameAbsoluteAngle = 0;
     private bool isFirstFrame = true;
 
-    // PUBLIC STATE: The exact net delta traveled since the last hit object was judged
-    public double RotationDeltaSinceLastNote { get; private set; }
+    private double RotationDeltaSinceLastNote;
 
     protected override void Update()
     {
         base.Update();
 
-        // 1. Fetch the raw absolute angle of the paddle component this frame (usually 0 to 360)
         double currentAbsoluteAngle = Cursor.Rotation; 
 
         if (isFirstFrame)
@@ -164,31 +162,24 @@ namespace osu.Game.Rulesets.Trace.UI
             return;
         }
 
-        // 2. Calculate the shortest delta between this frame and the last frame to detect wrap-arounds
         double frameDelta = currentAbsoluteAngle - lastFrameAbsoluteAngle;
 
-        // Normalize the frame delta to (-180, 180] to handle 360 -> 0 degree crossings smoothly
         frameDelta = ((frameDelta + 180) % 360 + 360) % 360 - 180;
 
-        // 3. Add the frame delta to our continuous running total
         cumulativePaddleAngle += frameDelta;
         
-        // 4. Continually accumulate the movement into our note-to-note tracking window
         RotationDeltaSinceLastNote += frameDelta;
 
-        // Save state for the next frame calculation
         lastFrameAbsoluteAngle = currentAbsoluteAngle;
     }
 
-    /// <summary>
-    /// Resets the note-to-note tracking window. Call this right after a note consumes the state.
-    /// </summary>
-    public void ResetNoteTrackingWindow()
+    public double GetRotationDelta()
     {
+        double rotationDelta = RotationDeltaSinceLastNote;
         RotationDeltaSinceLastNote = 0;
+        return rotationDelta;
     }
 
-    // CRITICAL: Reset everything if the player retries, rewinds, or restarts the map
     public void ResetAllState()
     {
         cumulativePaddleAngle = 0;
