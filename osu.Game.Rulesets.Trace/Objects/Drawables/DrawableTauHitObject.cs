@@ -1,0 +1,101 @@
+﻿using System.Diagnostics;
+using System.Linq;
+using JetBrains.Annotations;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Trace.Configuration;
+using osu.Game.Rulesets.Trace.UI;
+
+namespace osu.Game.Rulesets.Trace.Objects.Drawables
+{
+    public partial class DrawableTauHitObject<T> : DrawableHitObject<TauHitObject>, IKeyBindingHandler<TauAction>, ICanApplyResult
+        where T : TauHitObject
+    {
+        public new T HitObject => (T)base.HitObject;
+
+        protected DrawableTauHitObject(T obj)
+            : base(obj)
+        {
+        }
+
+        /// <summary>
+        /// A list of <see cref="TauAction"/>s that denotes which keys can trigger this Hit object.
+        /// </summary>
+        protected virtual TauAction[] Actions { get; } =
+        {
+            TauAction.LeftButton,
+            TauAction.RightButton
+        };
+
+        [CanBeNull]
+        protected TauPlayfield Playfield { get; private set; } = null;
+
+        protected readonly BindableFloat NoteSize = new(16f);
+
+        [BackgroundDependencyLoader(true)]
+        private void load(TauRulesetConfigManager config, TauPlayfield playfield)
+        {
+            config?.BindWith(TauRulesetSettings.NotesSize, NoteSize);
+            Playfield = playfield;
+        }
+
+        protected override double InitialLifetimeOffset => HitObject.TimePreempt;
+
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        {
+            Debug.Assert(HitObject.HitWindows != null);
+
+            if (!userTriggered)
+            {
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(HitResult.Miss);
+
+                return;
+            }
+
+            if (!CheckForValidation())
+                return;
+
+            var result = HitObject.HitWindows.ResultFor(timeOffset);
+
+            if (result == HitResult.None)
+                return;
+
+            ApplyResult(result);
+        }
+
+        /// <summary>
+        /// Should return whether or not a <see cref="DrawableHitObject"/> has the correct set of parameters for it to be hit.
+        /// </summary>
+        protected virtual bool CheckForValidation() => true;
+
+        protected new void ApplyResult(HitResult result)
+        {
+            ApplyCustomResult(Result);
+
+            base.ApplyResult(result);
+        }
+
+        public virtual void ApplyCustomResult(JudgementResult result) { }
+
+        public virtual bool OnPressed(KeyBindingPressEvent<TauAction> e)
+        {
+            if (Judged)
+                return false;
+
+            return Actions.Contains(e.Action) && UpdateResult(true);
+        }
+
+        public virtual void OnReleased(KeyBindingReleaseEvent<TauAction> e)
+        {
+        }
+
+        public void ForcefullyApplyResult(HitResult result)
+            => ApplyResult(result);
+    }
+}

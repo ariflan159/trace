@@ -1,0 +1,53 @@
+﻿using NUnit.Framework;
+using osu.Framework.Graphics;
+using osu.Framework.Testing;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Trace.Judgements;
+using osu.Game.Rulesets.Trace.Objects;
+using osu.Game.Rulesets.Trace.Objects.Drawables;
+using osu.Game.Rulesets.Trace.UI;
+using osu.Game.Rulesets.Trace.UI.Effects;
+
+namespace osu.Game.Rulesets.Trace.Tests
+{
+    public abstract partial class TestSceneKiaiEffects<T, TEmitter> : TauTestScene
+        where T : KiaiEffect<TEmitter>, new()
+        where TEmitter : Emitter, new()
+    {
+        protected T KiaiContainer;
+
+        protected virtual void AddExtraSetupSteps()
+        {
+        }
+
+        [SetUpSteps]
+        public void SetUp()
+        {
+            AddStep("Clear contents", Clear);
+            AddStep("Add contents", () => Add(new TauPlayfieldAdjustmentContainer
+            {
+                Children = new Drawable[]
+                {
+                    new TauPlayfield(),
+                    KiaiContainer = new T()
+                }
+            }));
+
+            AddExtraSetupSteps();
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TestEffect(bool isInversed)
+        {
+            AddStep("Add beat result",
+                () => KiaiContainer.OnNewResult(
+                    new DrawableBeat(new Beat()), new JudgementResult(new Beat(), new TauJudgement()) { Type = HitResult.Great }));
+
+            AddStep("Add hard beat result",
+                () => KiaiContainer.OnNewResult(
+                    new DrawableHardBeat(new HardBeat()), new JudgementResult(new HardBeat(), new TauJudgement()) { Type = HitResult.Great }));
+        }
+    }
+}

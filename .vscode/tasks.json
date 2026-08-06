@@ -8,7 +8,7 @@
             "args": [
                 "build",
                 "--no-restore",
-                "osu.Game.Rulesets.Tau.Tests",
+                "osu.Game.Rulesets.Trace.Tests",
                 "/p:GenerateFullPaths=true",
                 "/m",
                 "/verbosity:m"

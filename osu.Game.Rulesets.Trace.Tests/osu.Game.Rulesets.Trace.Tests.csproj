@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <StartupObject>osu.Game.Rulesets.Trace.Tests.VisualTestRunner</StartupObject>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+    <ItemGroup Label="Service">
+        <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    </ItemGroup>
+    <PropertyGroup>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <AssemblyName>osu.Game.Rulesets.Trace.Tests</AssemblyName>
+    </PropertyGroup>
+    <ItemGroup Label="Package References">
+        <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+        <PackageReference Include="NUnit" Version="4.6.1" />
+        <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\osu.Game.Rulesets.Trace\osu.Game.Rulesets.Trace.csproj" />
+    </ItemGroup>
+    <PropertyGroup Label="Project">
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>osu.Game.Rulesets.Trace.Tests</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\**\*" />
+    </ItemGroup>
+</Project>

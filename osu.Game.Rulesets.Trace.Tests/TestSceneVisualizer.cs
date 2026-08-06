@@ -1,0 +1,35 @@
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics;
+using osu.Game.Rulesets.Trace.Objects;
+using osu.Game.Rulesets.Trace.Objects.Drawables;
+using osu.Game.Rulesets.Trace.UI;
+using osu.Game.Rulesets.Trace.UI.Effects;
+using osu.Game.Tests.Visual;
+using osuTK.Graphics;
+
+namespace osu.Game.Rulesets.Trace.Tests
+{
+    public partial class TestSceneVisualizer : OsuTestScene
+    {
+        public TestSceneVisualizer()
+        {
+            PlayfieldVisualizer visualizer;
+            Add(new TauPlayfieldAdjustmentContainer
+            {
+                Child = visualizer = new PlayfieldVisualizer
+                {
+                    AccentColour = Color4.White.Opacity(0.25f)
+                }
+            });
+
+            AddStep("Show visualizer", () => visualizer.FadeIn());
+
+            AddStep("Beat hit", () => visualizer.OnNewResult(new DrawableBeat(new Beat())));
+            AddStep("Hard beat hit", () => visualizer.OnNewResult(new DrawableHardBeat(new HardBeat())));
+            AddStep("Slider hit", () => visualizer.UpdateAmplitudes(0f, 0.15f));
+        }
+
+        protected override Ruleset CreateRuleset()
+            => new TauRuleset();
+    }
+}

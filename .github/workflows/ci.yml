@@ -24,13 +24,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/inspectcode
-          key: inspectcode-${{ hashFiles('.config/dotnet-tools.json', '.github/workflows/ci.yml', 'osu.Game.Rulesets.Tau.sln*', '.editorconfig', '.globalconfig') }}
+          key: inspectcode-${{ hashFiles('.config/dotnet-tools.json', '.github/workflows/ci.yml', 'osu.Game.Rulesets.Trace.sln*', '.editorconfig', '.globalconfig') }}
 
       - name: Dotnet code style
-        run: dotnet build -c Debug osu.Game.Rulesets.Tau.sln -p:EnforceCodeStyleInBuild=true
+        run: dotnet build -c Debug osu.Game.Rulesets.Trace.sln -p:EnforceCodeStyleInBuild=true
 
       - name: InspectCode
-        run: dotnet jb inspectcode $(pwd)/osu.Game.Rulesets.Tau.sln --no-build --output="inspectcodereport.xml" --caches-home="inspectcode" --verbosity=WARN
+        run: dotnet jb inspectcode $(pwd)/osu.Game.Rulesets.Trace.sln --no-build --output="inspectcodereport.xml" --caches-home="inspectcode" --verbosity=WARN
 
       - name: NVika
         run: dotnet nvika parsereport "${{github.workspace}}/inspectcodereport.xml"
@@ -38,8 +38,8 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: osu.Game.Rulesets.Tau.dll
-          path: "osu.Game.Rulesets.Tau/bin/Debug/net8.0"
+          name: osu.Game.Rulesets.Trace.dll
+          path: "osu.Game.Rulesets.Trace/bin/Debug/net8.0"
           retention-days: 90
 
   test:
@@ -66,7 +66,7 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Compile
-        run: dotnet build -c Debug -warnaserror osu.Game.Rulesets.Tau.sln
+        run: dotnet build -c Debug -warnaserror osu.Game.Rulesets.Trace.sln
 
       - name: Test
         run: dotnet test $pwd/*.Tests/bin/Debug/*/*.Tests.dll --logger "trx;LogFileName=TestResults-${{matrix.os.prettyname}}-${{matrix.threadingMode}}.trx"

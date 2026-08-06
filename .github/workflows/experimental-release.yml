@@ -22,7 +22,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build osu.Game.Rulesets.Tau --configuration Release -p:version=${{env.CURRENT_TAG}} --no-restore
+      run: dotnet build osu.Game.Rulesets.Trace --configuration Release -p:version=${{env.CURRENT_TAG}} --no-restore
 
     - name: Create Release
       id: create_release
@@ -57,7 +57,7 @@ jobs:
             - ar/
             - fr/
             - .../
-            - osu.Game.Rulesets.Tau.dll
+            - osu.Game.Rulesets.Trace.dll
           </details>
 
           ---
@@ -71,6 +71,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./osu.Game.Rulesets.Tau/bin/Release/net8.0/osu.Game.Rulesets.Tau.dll
-        asset_name: osu.Game.Rulesets.Tau.dll
+        asset_path: ./osu.Game.Rulesets.Trace/bin/Release/net8.0/osu.Game.Rulesets.Trace.dll
+        asset_name: osu.Game.Rulesets.Trace.dll
         asset_content_type: application/vnd.microsoft.portable-executable

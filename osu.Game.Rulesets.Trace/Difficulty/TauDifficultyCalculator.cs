@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Trace.Difficulty.Preprocessing;
+using osu.Game.Rulesets.Trace.Difficulty.Skills;
+using osu.Game.Rulesets.Trace.Mods;
+using osu.Game.Rulesets.Trace.Objects;
+using osu.Game.Rulesets.Trace.Scoring;
+using osu.Game.Rulesets.Trace.UI;
+using osu.Game.Utils;
+
+namespace osu.Game.Rulesets.Trace.Difficulty
+{
+    public class TauDifficultyCalculator : DifficultyCalculator
+    {
+        private readonly TauCachedProperties properties = new();
+        private double hitWindowGreat;
+
+        private const double difficulty_multiplier = 0.0820;
+
+        public TauDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
+            : base(ruleset, beatmap)
+        {
+        }
+
+        protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
+        {
+            if (beatmap.HitObjects.Count == 0)
+                return new TauDifficultyAttributes { Mods = mods };
+
+            double aim = Math.Sqrt(skills[0].DifficultyValue()) * difficulty_multiplier;
+            double aimNoSliders = Math.Sqrt(skills[1].DifficultyValue()) * difficulty_multiplier;
+            double speed = Math.Sqrt(skills[2].DifficultyValue()) * difficulty_multiplier;
+            double complexity = Math.Sqrt(skills[3].DifficultyValue()) * difficulty_multiplier;
+
+            if (mods.Any(m => m.Name == "Relax"))
+            {
+                speed = 0.0;
+                complexity = 0.0;
+            }
+
+            if (mods.Any(m => m.Name == "Autopilot"))
+            {
+                aim = 0.0;
+                aimNoSliders = 0.0;
+            }
+
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
+            double preempt = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.ApproachRate, 1800, 1200, 450) / clockRate;
+
+            double baseAim = Math.Pow(5 * Math.Max(1, aim / 0.0675) - 4, 3) / 100000;
+            double baseSpeed = Math.Pow(5 * Math.Max(1, speed / 0.0675) - 4, 3) / 100000;
+            double baseComplexity = Math.Pow(5 * Math.Max(1, complexity / 0.0675) - 4, 3) / 100000;
+
+            double basePerformance =
+                Math.Pow(
+                    Math.Pow(baseAim, 1.1) + Math.Pow(baseSpeed, 1.1) + Math.Pow(baseComplexity, 1.1),
+                    1.0 / 1.1
+                );
+
+            double starRating = basePerformance > 0.00001 ? Math.Cbrt(1.12) * 0.027 * (Math.Cbrt(100000 / Math.Pow(2, 1 / 1.1) * basePerformance) + 4) : 0;
+
+            return new TauDifficultyAttributes
+            {
+                AimDifficulty = aim,
+                SpeedDifficulty = speed,
+                ComplexityDifficulty = complexity,
+                StarRating = starRating,
+                Mods = mods,
+                MaxCombo = beatmap.GetMaxCombo(),
+                OverallDifficulty = beatmap.Difficulty.OverallDifficulty,
+                ApproachRate = preempt > 1200 ? (1800 - preempt) / 120 : (1200 - preempt) / 150 + 5,
+                NotesCount = beatmap.HitObjects.Count(h => h is Beat),
+                SliderCount = beatmap.HitObjects.Count(s => s is Slider),
+                HardBeatCount = beatmap.HitObjects.Count(hb => hb is HardBeat),
+                SliderFactor = aim > 0 ? aimNoSliders / aim : 1
+            };
+        }
+
+        protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, Mod[] mods)
+        {
+            properties.SetRange(beatmap.Difficulty.CircleSize);
+
+            TauHitObject lastObject = null;
+            TauAngledDifficultyHitObject lastAngled = null;
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
+            var objects = new List<DifficultyHitObject>();
+
+            foreach (var hitObject in beatmap.HitObjects.Cast<TauHitObject>())
+            {
+                if (lastObject != null)
+                {
+                    if (hitObject is AngledTauHitObject)
+                    {
+                        var obj = new TauAngledDifficultyHitObject(hitObject, lastObject, clockRate, objects, objects.Count, properties, lastAngled);
+                        objects.Add(obj);
+
+                        lastAngled = obj;
+                    }
+                    else
+                        objects.Add(new TauDifficultyHitObject(hitObject, lastObject, clockRate, objects, objects.Count));
+                }
+
+                lastObject = hitObject;
+            }
+
+            return objects;
+        }
+
+        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods)
+        {
+            HitWindows hitWindows = new TauHitWindow();
+            hitWindows.SetDifficulty(beatmap.Difficulty.OverallDifficulty);
+
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
+
+            hitWindowGreat = hitWindows.WindowFor(HitResult.Great) / clockRate;
+            return
+            [
+                new Aim(mods, [typeof(Beat), typeof(StrictHardBeat), typeof(SliderRepeat), typeof(Slider)]),
+                new Aim(mods, [typeof(Beat), typeof(StrictHardBeat)]),
+                new Speed(mods, hitWindowGreat),
+                new Complexity(mods)
+            ];
+        }
+
+        protected override Mod[] DifficultyAdjustmentMods =>
+        [
+            // Diff. Reduction
+            new TauModEasy(),
+            new TauModHalfTime(),
+            new TauModDaycore(),
+
+            // Diff. Increase
+            new TauModHardRock(),
+            new TauModDoubleTime(),
+            new TauModNightcore(),
+            new TauModStrict(),
+
+            // Automation
+            new TauModRelax(),
+
+            // Conversion
+            new TauModDifficultyAdjust(),
+            new TauModLite(),
+
+            // Fun
+            new ModWindUp(),
+            new ModWindDown(),
+            new ModAdaptiveSpeed(),
+            new TauModImpossibleSliders()
+        ];
+    }
+}

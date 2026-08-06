@@ -1,0 +1,23 @@
+﻿using osu.Framework.Localisation;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Trace.Beatmaps;
+using osu.Game.Rulesets.Trace.Localisation;
+
+namespace osu.Game.Rulesets.Trace.Mods
+{
+    public class TauModImpossibleSliders : Mod, IApplicableToBeatmapConverter
+    {
+        public override string Name => "Impossible Sliders";
+        public override LocalisableString Description => ModStrings.ImpossibleSlidersDescription;
+        public override string Acronym => "IS";
+
+        public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
+        {
+            if (beatmapConverter is not TauBeatmapConverter tauConverter)
+                return;
+
+            tauConverter.CanConvertImpossibleSliders = true;
+        }
+    }
+}

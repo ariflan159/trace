@@ -1,0 +1,49 @@
+﻿using System;
+using osu.Framework.Bindables;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
+using osu.Game.Beatmaps;
+using osu.Game.Configuration;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Trace.Beatmaps;
+using osu.Game.Rulesets.Trace.Localisation;
+
+namespace osu.Game.Rulesets.Trace.Mods
+{
+    public class TauModLite : Mod, IApplicableToBeatmapConverter
+    {
+        public override string Name => "Lite";
+        public override string Acronym => "LT";
+        public override IconUsage? Icon => FontAwesome.Solid.History;
+        public override LocalisableString Description => ModStrings.LiteDescription;
+        public override ModType Type => ModType.Conversion;
+
+        public override Type[] IncompatibleMods => [typeof(TauModStrict), typeof(TauModLenience)];
+
+        [SettingSource(typeof(ModStrings), nameof(ModStrings.LiteToggleSlidersName), nameof(ModStrings.LiteToggleSlidersDescription))]
+        public Bindable<bool> ToggleSliders { get; } = new Bindable<bool>(false);
+
+        [SettingSource(typeof(ModStrings), nameof(ModStrings.LiteToggleHardBeatsName), nameof(ModStrings.LiteToggleHardBeatsDescription))]
+        public Bindable<bool> ToggleHardBeats { get; } = new Bindable<bool>(false);
+
+        // maybe replace this with `BeatDivisorControl`?
+        [SettingSource(typeof(ModStrings), nameof(ModStrings.LiteSliderDivisionLevelName), nameof(ModStrings.LiteSliderDivisionLevelDescription))]
+        public BindableInt SlidersDivisionLevel { get; } = new BindableInt
+        {
+            Value = 2,
+            Default = 2,
+            MinValue = 1,
+            MaxValue = 64
+        };
+
+        public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
+        {
+            if (beatmapConverter is not TauBeatmapConverter tauConverter)
+                return;
+
+            tauConverter.CanConvertToHardBeats = ToggleHardBeats.Value;
+            tauConverter.CanConvertToSliders = ToggleSliders.Value;
+            tauConverter.SliderDivisor = SlidersDivisionLevel.Value;
+        }
+    }
+}
