@@ -9,19 +9,17 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables.Pieces
 {
     public partial class HardBeatPiece : CircularContainer
     {
-        public BindableFloat NoteSize = new(16f);
-
         public HardBeatPiece()
         {
             Masking = true;
-            BorderThickness = 5;
+            BorderThickness = 15;
             BorderColour = Color4.White;
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             FillAspectRatio = 1;
             FillMode = FillMode.Fit;
-
+            Colour = Color4.Purple;
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -29,10 +27,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables.Pieces
                 AlwaysPresent = true
             };
 
-            NoteSize.BindValueChanged(value => BorderThickness = convertNoteSizeToThickness(value.NewValue));
         }
 
-        private float convertNoteSizeToThickness(float noteSize)
-            => Interpolation.ValueAt(noteSize, 3f, 15f, 10f, 25f);
     }
 }

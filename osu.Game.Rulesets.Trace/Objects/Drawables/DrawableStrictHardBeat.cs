@@ -1,77 +1,60 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Trace.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Trace.UI;
-using osu.Game.Rulesets.Trace.UI.Cursor;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Trace.Objects.Drawables
 {
     public partial class DrawableStrictHardBeat : DrawableAngledTauHitObject<StrictHardBeat>
     {
-        protected override TauAction[] Actions { get; } =
-        {
-            TauAction.HardButton1,
-            TauAction.HardButton2
-        };
-
-        private readonly StrictHardBeatPiece piece;
+        public Drawable DrawableBox;
 
         public DrawableStrictHardBeat()
             : this(null)
         {
         }
 
-        public DrawableStrictHardBeat(StrictHardBeat obj)
-            : base(obj)
+        public DrawableStrictHardBeat(StrictHardBeat hitObject)
+            : base(hitObject)
         {
-            Name = "Strict Hard beat track";
+            Name = "Strict hard beat track";
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
-            Alpha = 0f;
-            AlwaysPresent = true;
+            Size = Vector2.One;
 
-            AddInternal(piece = new StrictHardBeatPiece
+            AddInternal(DrawableBox = new Container
             {
-                RelativeSizeAxes = Axes.Both,
-                NoteSize = { BindTarget = NoteSize },
+                RelativePositionAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Alpha = 0,
+                AlwaysPresent = true,
+                Size = new Vector2(NoteSize.Default),
+                Child = new ArcPiece(Color4.Purple)
             });
         }
 
-        protected override void OnApply()
-        {
-            base.OnApply();
-            piece.AngleRange.Value = HitObject.Range;
-        }
-
-        protected override Paddle.AngleValidationResult ValidateAngle(float angle)
-        {
-            var firstResult = base.ValidateAngle((HitObject.Angle + GetSliderOffset() + GetCurrentOffset()).Normalize());
-            var secondResult = base.ValidateAngle((HitObject.Angle + GetSliderOffset() - GetCurrentOffset()).Normalize());
-
-            return new Paddle.AngleValidationResult(
-                firstResult.IsValid && secondResult.IsValid,
-                firstResult.Delta + secondResult.Delta / 2f
-            );
-        }
-
-        protected virtual float GetSliderOffset() => 0;
-
-        protected override float GetCurrentOffset()
-            => (float)(HitObject.Range / 2);
-
         [Resolved(canBeNull: true)]
-        private TauCachedProperties properties { get; set; }
+        protected TauCachedProperties Properties { get; private set; }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
 
-            this.FadeIn(HitObject.TimeFadeIn);
-            piece.ResizeTo(1, HitObject.TimePreempt);
+            DrawableBox.FadeIn(HitObject.TimeFadeIn);
+            DrawableBox.MoveToY(-0.5f, HitObject.TimePreempt);
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            NoteSize.BindValueChanged(value => DrawableBox.Size = new Vector2(value.NewValue), true);
         }
 
         [Resolved]
@@ -82,26 +65,27 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
             base.UpdateHitStateTransforms(state);
 
             const double time_fade_hit = 250, time_fade_miss = 400;
-            const float scale_hit = 1.25f, scale_miss = 1.1f;
+            var offset = new Vector2(0, -.1f);
 
             switch (state)
             {
-                case ArmedState.Idle:
-                    LifetimeStart = HitObject.StartTime - HitObject.TimePreempt;
-
-                    break;
-
                 case ArmedState.Hit:
-                    this.ScaleTo(scale_hit, time_fade_hit, Easing.OutQuint)
-                        .FadeColour(colour.ForHitResult(Result.Type), time_fade_hit, Easing.OutQuint)
-                        .FadeOut(time_fade_hit);
+                    DrawableBox.ScaleTo(2f, time_fade_hit, Easing.OutQuint)
+                               .FadeColour(colour.ForHitResult(Result.Type), time_fade_hit, Easing.OutQuint)
+                               .MoveToOffset(offset, time_fade_hit, Easing.OutQuint)
+                               .FadeOut(time_fade_hit);
+
+                    this.Delay(time_fade_hit).Expire();
 
                     break;
 
                 case ArmedState.Miss:
-                    this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                        .ResizeTo(scale_miss, time_fade_hit, Easing.OutQuint)
-                        .FadeOut(time_fade_miss);
+                    DrawableBox.ScaleTo(0.5f, time_fade_miss, Easing.InQuint)
+                               .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                               .MoveToOffset(offset, time_fade_miss, Easing.OutQuint)
+                               .FadeOut(time_fade_miss);
+
+                    this.Delay(time_fade_miss).Expire();
 
                     break;
             }

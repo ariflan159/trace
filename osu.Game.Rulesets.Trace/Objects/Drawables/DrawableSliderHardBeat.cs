@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
             Scale = new Vector2(1.025f);
         }
 
-        protected override float GetSliderOffset() => DrawableSlider.HitObject.Angle;
+        //protected override float GetSliderOffset() => DrawableSlider.HitObject.Angle;
 
         public float GetAbsoluteAngle() => HitObject.Angle + GetCurrentOffset();
     }

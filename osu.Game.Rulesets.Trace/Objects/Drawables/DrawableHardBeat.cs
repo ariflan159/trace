@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
             Alpha = 0f;
             AlwaysPresent = true;
 
-            AddInternal(new HardBeatPiece { RelativeSizeAxes = Axes.Both, NoteSize = { BindTarget = NoteSize } });
+            AddInternal(new HardBeatPiece { RelativeSizeAxes = Axes.Both });
         }
 
         [Resolved(canBeNull: true)]
