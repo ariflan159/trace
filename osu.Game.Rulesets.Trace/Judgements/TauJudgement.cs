@@ -5,6 +5,6 @@ namespace osu.Game.Rulesets.Trace.Judgements
 {
     public class TauJudgement : Judgement
     {
-        public override HitResult MaxResult => HitResult.Perfect;
+        public override HitResult MaxResult => HitResult.Great;
     }
 }
