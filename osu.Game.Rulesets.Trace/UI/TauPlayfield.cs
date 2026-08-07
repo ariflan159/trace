@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.Trace.UI
             RelativeSizeAxes = Axes.None;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = BASE_SIZE;
+            Size = new Vector2(1080);
 
             AddRangeInternal([
                 PlayfieldPiece = new PlayfieldPiece(),
@@ -142,50 +142,5 @@ namespace osu.Game.Rulesets.Trace.UI
                 return judgement;
             }
         }
-        private double cumulativePaddleAngle = 0;
-    private double lastFrameAbsoluteAngle = 0;
-    private bool isFirstFrame = true;
-
-    private double RotationDeltaSinceLastNote;
-
-    protected override void Update()
-    {
-        base.Update();
-
-        double currentAbsoluteAngle = Cursor.Rotation; 
-
-        if (isFirstFrame)
-        {
-            lastFrameAbsoluteAngle = currentAbsoluteAngle;
-            cumulativePaddleAngle = currentAbsoluteAngle;
-            isFirstFrame = false;
-            return;
-        }
-
-        double frameDelta = currentAbsoluteAngle - lastFrameAbsoluteAngle;
-
-        frameDelta = ((frameDelta + 180) % 360 + 360) % 360 - 180;
-
-        cumulativePaddleAngle += frameDelta;
-        
-        RotationDeltaSinceLastNote += frameDelta;
-
-        lastFrameAbsoluteAngle = currentAbsoluteAngle;
-    }
-
-    public double GetRotationDelta()
-    {
-        double rotationDelta = RotationDeltaSinceLastNote;
-        RotationDeltaSinceLastNote = 0;
-        return rotationDelta;
-    }
-
-    public void ResetAllState()
-    {
-        cumulativePaddleAngle = 0;
-        lastFrameAbsoluteAngle = 0;
-        isFirstFrame = true;
-        RotationDeltaSinceLastNote = 0;
-    }
     }
 }
