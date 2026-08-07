@@ -11,11 +11,11 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables.Pieces
     {
         public ArcPiece(Color4 color)
         {
-            PathRadius = 5; 
+            PathRadius = 8; 
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Colour = color;
-            Vertices = generateArc(localRadius: 150, totalAngleWidth: 30);
+            Vertices = generateArc(localRadius: 384, totalAngleWidth: 20);
         }
 
         private List<Vector2> generateArc(float localRadius, float totalAngleWidth)

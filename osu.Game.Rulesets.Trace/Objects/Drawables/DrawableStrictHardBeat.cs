@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
                 Alpha = 0,
                 AlwaysPresent = true,
                 Size = new Vector2(NoteSize.Default),
-                Child = new ArcPiece(Color4.Purple)
+                Child = new ArcPiece(Colour = new Color4(188, 64, 255, 255))
             });
         }
 
@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
 
             const double time_fade_hit = 250, time_fade_miss = 400;
             var offset = new Vector2(0, -.1f);
-
+            
             switch (state)
             {
                 case ArmedState.Hit:

@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
@@ -19,7 +20,7 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             FillAspectRatio = 1;
             FillMode = FillMode.Fit;
-            Colour = Color4.Purple;
+            Colour = new Color4(188, 64, 255, 255);
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
