@@ -6,6 +6,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -74,17 +75,19 @@ namespace osu.Game.Rulesets.Trace.Beatmaps
         {
             var comboData = original as IHasCombo;
             var sample = original is IHasPathWithRepeats c ? c.NodeSamples[0] : null;
-
+            
             //if (original.IsHardBeat() && CanConvertToHardBeats && !HardBeatsAreStrict)
             //    return convertToHardBeat(original, comboData, sample);
             //if (original.IsHardBeat() && CanConvertToHardBeats)
             //    return convertToStrictHardBeat(original, comboData, sample);
-
+                
+            SnapType snapType = SnappingHelper.GetSnapType(original, Beatmap.ControlPointInfo);
             if (original.IsHardBeat())
             {
-                return convertToBeat(original, comboData, sample);
+                return convertToHardBeat(original, comboData, sample);
             }
-
+            if (snapType == SnapType.OnBeat)
+                return convertToBeat(original, comboData, sample);
             return convertToTraceBeat(original, comboData, sample);
         }
 
@@ -295,5 +298,59 @@ namespace osu.Game.Rulesets.Trace.Beatmaps
         /// <param name="original">The original hit object.</param>
         public static bool IsHardBeat(this HitObject original)
             => (original is IHasPathWithRepeats tmp ? tmp.NodeSamples[0] : original.Samples).Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+    }
+    public class SnappingHelper
+    {
+        // Define a small tolerance for floating-point inaccuracies
+        private const double LENIENT_ERROR = 1.0; 
+
+        public static SnapType GetSnapType(HitObject hitObject, ControlPointInfo controlPoints)
+        {
+            // 1. Retrieve the active timing point for the object's start time
+            TimingControlPoint timingPoint = controlPoints.TimingPointAt(hitObject.StartTime);
+            
+            // 2. Calculate the milliseconds elapsed since the timing point started
+            double timeOffset = hitObject.StartTime - timingPoint.Time;
+            
+            // 3. Find the total number of beats passed (as a decimal)
+            double beatsPassed = timeOffset / timingPoint.BeatLength;
+            
+            // 4. Extract the fractional part of the beat
+            double fractionalBeat = beatsPassed - Math.Floor(beatsPassed);
+            
+            // Convert the fraction into milliseconds for stable tolerance checking
+            double msFromPerfectSnap = fractionalBeat * timingPoint.BeatLength;
+
+            // 5. Match against common snapping fractions (1/1, 1/2, 1/4, 1/3)
+            if (IsCloseTo(msFromPerfectSnap, 0, LENIENT_ERROR) || IsCloseTo(msFromPerfectSnap, timingPoint.BeatLength, LENIENT_ERROR))
+                return SnapType.OnBeat; // 1/1 (Downbeat / Full beat)
+
+            if (IsCloseTo(msFromPerfectSnap, timingPoint.BeatLength / 2, LENIENT_ERROR))
+                return SnapType.HalfBeat; // 1/2 snap
+
+            if (IsCloseTo(msFromPerfectSnap, timingPoint.BeatLength / 4, LENIENT_ERROR) || 
+                IsCloseTo(msFromPerfectSnap, (timingPoint.BeatLength / 4) * 3, LENIENT_ERROR))
+                return SnapType.QuarterBeat; // 1/4 snap
+
+            if (IsCloseTo(msFromPerfectSnap, timingPoint.BeatLength / 3, LENIENT_ERROR) || 
+                IsCloseTo(msFromPerfectSnap, (timingPoint.BeatLength / 3) * 2, LENIENT_ERROR))
+                return SnapType.Triplet; // 1/3 snap
+
+            return SnapType.OffBeat; // Unsapped or complex stream (1/8, 1/16, etc.)
+        }
+
+        private static bool IsCloseTo(double value, double target, double tolerance)
+        {
+            return Math.Abs(value - target) <= tolerance;
+        }
+    }
+
+    public enum SnapType
+    {
+        OnBeat,       // 1/1
+        HalfBeat,     // 1/2
+        QuarterBeat,  // 1/4
+        Triplet,      // 1/3
+        OffBeat       // Everything else
     }
 }
