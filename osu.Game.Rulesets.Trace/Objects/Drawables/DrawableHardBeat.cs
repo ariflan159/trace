@@ -11,11 +11,6 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
 {
     public partial class DrawableHardBeat : DrawableTauHitObject<HardBeat>
     {
-        protected override TauAction[] Actions { get; } =
-        {
-            TauAction.HardButton1,
-            TauAction.HardButton2
-        };
 
         public DrawableHardBeat()
             : this(null)
