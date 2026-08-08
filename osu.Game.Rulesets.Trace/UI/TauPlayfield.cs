@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Trace.UI
         internal readonly EffectsContainer EffectsContainer;
 
         public static readonly Vector2 BASE_SIZE = new(768);
-        public static readonly Bindable<Color4> ACCENT_COLOUR = new(Color4Extensions.FromHex(@"FF0040"));
+        public static readonly Bindable<Color4> ACCENT_COLOUR = new(Color4Extensions.FromHex(@"C5C500"));
 
         private readonly Dictionary<HitResult, DrawablePool<DrawableTauJudgement>> poolDictionary = new();
 
