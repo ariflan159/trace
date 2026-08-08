@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Trace.UI
 {
     public partial class TauSettingsSubsection : RulesetSettingsSubsection
     {
-        protected override LocalisableString Header => "tau";
+        protected override LocalisableString Header => "trace";
 
         public TauSettingsSubsection(Ruleset ruleset)
             : base(ruleset)
