@@ -14,10 +14,10 @@ namespace osu.Game.Rulesets.Trace.Beatmaps
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {
             int beats = HitObjects.Count(c => c is Beat);
-            int sliders = HitObjects.Count(s => s is Slider);
-            int hardBeats = HitObjects.Count(hb => hb is HardBeat);
+            int traceBeats = HitObjects.Count(s => s is TraceBeat);
+            int hardBeats = HitObjects.Count(hb => hb is HardBeat || hb is StrictHardBeat);
 
-            float total = Math.Max(1, beats + sliders + hardBeats);
+            float total = Math.Max(1, beats + traceBeats + hardBeats);
 
             return new[]
             {
@@ -34,10 +34,14 @@ namespace osu.Game.Rulesets.Trace.Beatmaps
                 },
                 new BeatmapStatistic
                 {
-                    Name = BeatmapStrings.SliderCount,
-                    Content = sliders.ToString(),
-                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders),
-                    BarDisplayLength = sliders / total
+                    Name = BeatmapStrings.TraceBeatCount,
+                    Content = traceBeats.ToString(),
+                    CreateIcon = () => new SpriteIcon
+                    {
+                        Icon = FontAwesome.Solid.MousePointer,
+                        Scale = new Vector2(.7f),
+                    },
+                    BarDisplayLength = traceBeats / total
                 },
                 new BeatmapStatistic
                 {

@@ -21,6 +21,9 @@ namespace osu.Game.Rulesets.Trace.Localisation
         /// </summary>
         public static LocalisableString HardBeatCount => new TranslatableString(getKey(@"hard_beat_count"), @"Hard Beat count");
 
+
+        public static LocalisableString TraceBeatCount => new TranslatableString(getKey("@trace_beat_count"), @"Trace Beat count");
+
         private static string getKey(string key) => $@"{prefix}:{key}";
     }
 }
