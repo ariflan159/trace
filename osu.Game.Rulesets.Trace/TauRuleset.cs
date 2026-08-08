@@ -187,7 +187,7 @@ namespace osu.Game.Rulesets.Trace
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Icon = TauIcons.Tau,
+                        Icon = FontAwesome.Solid.CompactDisc,
                         Scale = new Vector2(0.9f)
                     }
                 ]);
