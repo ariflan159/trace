@@ -84,11 +84,16 @@ namespace osu.Game.Rulesets.Trace.Beatmaps
             SnapType snapType = SnappingHelper.GetSnapType(original, Beatmap.ControlPointInfo);
             if (original.IsHardBeat())
             {
+                if (snapType == SnapType.OffBeat)
+                    return convertToTraceBeat(original, comboData, sample);
+                if (snapType != SnapType.OnBeat)
+                    return convertToBeat(original, comboData, sample);
                 if (original.Kiai)
                     return convertToStrictHardBeat(original, comboData, sample);
                 return convertToHardBeat(original, comboData, sample);
+                
             }
-            if (snapType == SnapType.OnBeat)
+            if (snapType == SnapType.OnBeat || snapType == SnapType.HalfBeat && original.Kiai)
                 return convertToBeat(original, comboData, sample);
             return convertToTraceBeat(original, comboData, sample);
         }
