@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Trace.UI.Cursor
             InternalChildren =
             [
                 paddle,
-                CreateHandlePiece().With(static h => h.Scale = new Vector2(0.99f))
+                //CreateHandlePiece().With(static h => h.Scale = new Vector2(0.99f))
             ];
 
             angleRange.BindValueChanged(a =>
@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Trace.UI.Cursor
             }, true);
         }
 
-        protected virtual CompositeDrawable CreateHandlePiece() => new HandlePiece();
+        //protected virtual CompositeDrawable CreateHandlePiece() => new HandlePiece();
 
         public record struct AngleValidationResult(bool IsValid, float Delta);
 
