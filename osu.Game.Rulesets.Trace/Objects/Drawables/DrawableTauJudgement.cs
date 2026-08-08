@@ -17,10 +17,6 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
 
         [Resolved]
         private TauRulesetConfigManager config { get; set; }
-
-        private float distance = 0.6f;
-        private float angle;
-
         public DrawableTauJudgement()
         {
             RelativePositionAxes = Axes.Both;
@@ -47,17 +43,6 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
 
             AccentColour = hitObj.AccentColour.Value;
 
-            angle = hitObj switch
-            {
-                DrawableAngledTauHitObject<Slider> { HitObject: IHasOffsetAngle ang } => ang.GetAbsoluteAngle(),
-                // TODO: This should NOT be here.
-                DrawableAngledTauHitObject<Beat> { HitObject: IHasOffsetAngle ang } => ang.GetAbsoluteAngle(),
-                DrawableSliderHardBeat s => s.GetAbsoluteAngle(),
-                DrawableStrictHardBeat s => s.HitObject.Angle,
-                DrawableBeat b => b.HitObject.Angle,
-                DrawableTraceBeat b => b.HitObject.Angle,
-                _ => 0f
-            };
         }
 
         protected override void PrepareForUse()
@@ -67,8 +52,8 @@ namespace osu.Game.Rulesets.Trace.Objects.Drawables
             Lighting.ResetAnimation();
             Lighting.SetColourFrom(this, Result);
 
-            Position = Extensions.FromPolarCoordinates(distance, angle);
-            Rotation = angle;
+            Position = Extensions.FromPolarCoordinates(0.2f, 180);
+            Rotation = 0f;
             
         }
 
